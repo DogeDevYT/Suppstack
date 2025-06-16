@@ -1,6 +1,20 @@
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
+
+  //Remove Supplement Styles
+  removeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 50,
+    padding: 10,
+  },
+  removeButtonText: {
+    color: '#ef4444', // Red color for remove action
+    fontWeight: '600',
+  },
+
+  //Previous styles
   container: { flex: 1, backgroundColor: '#f9fafb' },
   loginContainer: { flex: 1, justifyContent: 'center', padding: 20 },
   loginTitle: { fontSize: 24, color: '#4b5563', textAlign: 'center'},

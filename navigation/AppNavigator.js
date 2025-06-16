@@ -6,15 +6,9 @@ import AddSupplementScreen from '../screens/AddSupplementScreen';
 import HomeScreen from '../screens/HomeScreen';
 import SupplementDetailScreen from '../screens/SupplementDetailScreen';
 
-// Import Mock Data for screen titles
-import { MOCK_DATA } from '../data/mockData';
-
 const Stack = createStackNavigator();
 
-/**
- * This navigator contains all the screens for a logged-in user.
- */
-export default function AppNavigator() {
+export default function AppNavigator({ session }) {
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -24,14 +18,19 @@ export default function AppNavigator() {
           headerTitleStyle: { fontWeight: 'bold' },
         }}
       >
-        <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="AddSupplement" component={AddSupplementScreen} options={{ title: 'Add Supplement' }} />
+        <Stack.Screen name="Home" options={{ headerShown: false }}>
+          {(props) => <HomeScreen {...props} session={session} />}
+        </Stack.Screen>
+        <Stack.Screen name="AddSupplement" options={{ title: 'Add Supplement' }}>
+          {(props) => <AddSupplementScreen {...props} session={session} />}
+        </Stack.Screen>
+        {/*
+          The title will now be set by the SupplementDetailScreen itself,
+          removing the dependency on mock data here.
+        */}
         <Stack.Screen
           name="SupplementDetail"
           component={SupplementDetailScreen}
-          options={({ route }) => ({
-            title: MOCK_DATA.supplements.find(s => s.id === route.params.supplementId)?.name || 'Details',
-          })}
         />
       </Stack.Navigator>
     </NavigationContainer>
