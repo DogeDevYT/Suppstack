@@ -1,13 +1,19 @@
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, SafeAreaView, Text, View } from 'react-native';
 import HypeMeter from '../components/HypeMeter';
+import UpdateDosageComponent from '../components/UpdateDosageComponent';
 import { supabase } from '../lib/supabase';
 import { styles } from '../styles/globalStyles';
 
 const SupplementDetailScreen = ({ route, navigation }) => {
-  const { supplementId } = route.params;
+  // Get the new parameters passed from the HomeScreen
+  const { supplementId, stackItemId, currentDosage } = route.params;
   const [supplement, setSupplement] = useState(null);
   const [loading, setLoading] = useState(true);
+  
+  // State for the dosage input field, initialized with the current dosage
+  const [dosage, setDosage] = useState(currentDosage || '');
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     const fetchSupplementDetails = async () => {
@@ -53,8 +59,16 @@ const SupplementDetailScreen = ({ route, navigation }) => {
       <FlatList
         ListHeaderComponent={
           <View style={styles.detailContainer}>
-            {/* The title is now in the header, so we can remove it from here. */}
             <Text style={styles.detailDescription}>{supplement.description}</Text>
+            
+            {/* --- Render the new dosage editor component --- */}
+            {/* Pass the necessary props down to the component */}
+            <UpdateDosageComponent 
+              stackItemId={stackItemId}
+              currentDosage={currentDosage}
+              navigation={navigation}
+            />
+
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Hype Meter™</Text>
               <HypeMeter {...supplement} />

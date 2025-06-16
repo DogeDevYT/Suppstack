@@ -124,7 +124,11 @@ const HomeScreen = ({ navigation, session }) => {
             <SupplementCard
               name={item.name}
               dosage={item.dosage}
-              onPress={() => navigation.navigate('SupplementDetail', { supplementId: item.supplement_id })}
+              onPress={() => navigation.navigate('SupplementDetail', { 
+                supplementId: item.supplement_id,
+                stackItemId: item.id,
+                currentDosage: item.dosage 
+              })}
             />
             <TouchableOpacity
               style={styles.removeButton}
