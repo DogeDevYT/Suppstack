@@ -31,10 +31,10 @@ const HypeMeter = ({ efficacy, risk, hype, value }) => {
           strokeLinecap="round"
           transform={`rotate(-90 ${center} ${center})`}
         />
-        <SvgText x={center} y={center - 5} textAnchor="middle" fontSize="12" fill="#6b7280" fontWeight="bold">
+        <SvgText x={center} y={center - 5} textAnchor="middle" fontSize="12" fill="#6b7280" fontWeight="600">
           {label}
         </SvgText>
-        <SvgText x={center} y={center + 15} textAnchor="middle" fontSize="18" fill="#111827" fontWeight="bold">
+        <SvgText x={center} y={center + 15} textAnchor="middle" fontSize="18" fill="#111827" fontWeight="600">
           {score}%
         </SvgText>
       </Svg>
