@@ -14,6 +14,11 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
   },
 
+  // New style for the reminder button
+  reminderButton: {
+    backgroundColor: '#f97316', // Orange color
+  },
+
   //Previous styles
   container: { flex: 1, backgroundColor: '#f9fafb' },
   loginContainer: { flex: 1, justifyContent: 'center', padding: 20 },

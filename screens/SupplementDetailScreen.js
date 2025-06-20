@@ -4,16 +4,13 @@ import HypeMeter from '../components/HypeMeter';
 import UpdateDosageComponent from '../components/UpdateDosageComponent';
 import { supabase } from '../lib/supabase';
 import { styles } from '../styles/globalStyles';
+// Import the new reminder component
+import ReminderComponent from '../components/ReminderComponent';
 
 const SupplementDetailScreen = ({ route, navigation }) => {
-  // Get the new parameters passed from the HomeScreen
   const { supplementId, stackItemId, currentDosage } = route.params;
   const [supplement, setSupplement] = useState(null);
   const [loading, setLoading] = useState(true);
-  
-  // State for the dosage input field, initialized with the current dosage
-  const [dosage, setDosage] = useState(currentDosage || '');
-  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     const fetchSupplementDetails = async () => {
@@ -23,13 +20,12 @@ const SupplementDetailScreen = ({ route, navigation }) => {
           .from('supplements')
           .select('*')
           .eq('id', supplementId)
-          .single(); // Use .single() to get one object instead of an array
+          .single();
 
         if (error) throw error;
         
         if (data) {
           setSupplement(data);
-          // Set the screen title dynamically after fetching the data
           navigation.setOptions({ title: data.name });
         }
       } catch (error) {
@@ -61,13 +57,14 @@ const SupplementDetailScreen = ({ route, navigation }) => {
           <View style={styles.detailContainer}>
             <Text style={styles.detailDescription}>{supplement.description}</Text>
             
-            {/* --- Render the new dosage editor component --- */}
-            {/* Pass the necessary props down to the component */}
             <UpdateDosageComponent 
               stackItemId={stackItemId}
               currentDosage={currentDosage}
               navigation={navigation}
             />
+
+            {/* --- Add the new reminder component here --- */}
+            <ReminderComponent supplementName={supplement.name} />
 
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Hype Meter™</Text>
