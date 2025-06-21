@@ -40,6 +40,46 @@ export const styles = StyleSheet.create({
     borderStyle: 'dashed',
   },
 
+  // --- New Styles for News Feed ---
+  articleCard: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    marginHorizontal: 20,
+    marginBottom: 20,
+    overflow: 'hidden', // Ensures the image corners are rounded
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  articleImage: {
+    width: '100%',
+    height: 180,
+  },
+  articleImagePlaceholder: {
+    width: '100%',
+    height: 180,
+    backgroundColor: '#f3f4f6', // A light gray
+  },
+  articleTextContainer: {
+    padding: 15,
+  },
+  articleSource: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#6b7280', // Gray-500
+    marginBottom: 4,
+  },
+  articleTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1f2937', // Gray-800
+    lineHeight: 22,
+  },
+
   //Previous styles
   container: { flex: 1, backgroundColor: '#f9fafb' },
   loginContainer: { flex: 1, justifyContent: 'center', padding: 20 },
