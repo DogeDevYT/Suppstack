@@ -19,6 +19,27 @@ export const styles = StyleSheet.create({
     backgroundColor: '#f97316', // Orange color
   },
 
+  // New styles for the image uploader
+  supplementImage: {
+    width: '100%',
+    height: 200,
+    borderRadius: 12,
+    marginTop: 10,
+    backgroundColor: '#f3f4f6', // A light gray for the background
+  },
+  imagePlaceholder: {
+    width: '100%',
+    height: 200,
+    borderRadius: 12,
+    marginTop: 10,
+    backgroundColor: '#f3f4f6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#e5e7eb',
+    borderStyle: 'dashed',
+  },
+
   //Previous styles
   container: { flex: 1, backgroundColor: '#f9fafb' },
   loginContainer: { flex: 1, justifyContent: 'center', padding: 20 },
