@@ -12,7 +12,12 @@ class MainLayout extends StatefulWidget {
 
 class _MainLayoutState extends State<MainLayout> {
   int _currentIndex = 0;
+
+  // This allows the list to contain any kind of widget, including both
+  // const and non-const StatefulWidgets or StatelessWidgets.
   final List<Widget> _pages = [
+    // --- KEY CHANGE: Removed 'const' from HomePage() ---
+    // HomePage is now a StatefulWidget and cannot be a const.
     HomePage(),
     NewsFeedPage(),
     ProfilePage(),
