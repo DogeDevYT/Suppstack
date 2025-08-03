@@ -1,13 +1,43 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'firebase_options.dart';
 
-// Import the new screen files
+// Import your screen files
 import 'screens/login_page.dart';
 import 'screens/main_layout.dart';
 
+// Create an instance of the plugin
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // --- KEY CHANGE: Initialize Notifications ---
+  // 1. Define settings for Android and iOS
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher'); // Uses your app icon
+  const DarwinInitializationSettings initializationSettingsIOS =
+      DarwinInitializationSettings();
+  const InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+    iOS: initializationSettingsIOS,
+  );
+  // 2. Initialize the plugin with the settings
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  
+  // Initialize the timezone database
+  tz.initializeTimeZones();
+
+  // Initialize Firebase
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  
   await dotenv.load(fileName: ".env");
 
   await Supabase.initialize(
@@ -46,12 +76,10 @@ class MyApp extends StatelessWidget {
             );
           }
 
-          // If a user is logged in, show the MainLayout with tabs.
           if (snapshot.hasData && snapshot.data?.session != null) {
             return const MainLayout();
           }
 
-          // Otherwise, show the LoginPage.
           return const LoginPage();
         },
       ),

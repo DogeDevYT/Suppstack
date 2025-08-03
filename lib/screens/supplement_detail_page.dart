@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:suppstack/components/reminder_setter.dart';
 // You will need to create these components
 // import '../components/dosage_editor.dart';
 // import '../components/image_uploader.dart';
@@ -80,13 +81,15 @@ class _SupplementDetailPageState extends State<SupplementDetailPage> {
               const SizedBox(height: 16),
               Text(supplement['description'] ?? 'No description available.'),
               const Divider(height: 40),
+
+              // Add new Reminder Component
+              ReminderSetter(supplementName: supplement['product_name'] ?? 'this supplement'),
               
               // Here you would add your custom components
               // DosageEditor(stackItem: stackItem),
               // ImageUploader(stackItem: stackItem),
-              // ReminderSetter(supplementName: supplement['product_name']),
               
-              const Text('Dosage, Image, and Reminder components will go here.'),
+              const Text('Dosage and Image components will go here.'),
             ],
           );
         },

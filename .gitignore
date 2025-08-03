@@ -46,3 +46,17 @@ app.*.map.json
 
 #Environment variables:
 .env
+
+# gitignore node modules
+node_modules/
+
+# hide firebase options for dart so I dont' leak firebase project info
+lib/firebase_options.dart
+
+#hide firebase jsons
+google-service-account.json
+firebase.json
+
+#hide azurite 
+__azurite_db*
+__blobstorage__

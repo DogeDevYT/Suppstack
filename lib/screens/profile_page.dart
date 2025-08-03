@@ -1,48 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
-// Get a reference to the Supabase client
 final supabase = Supabase.instance.client;
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    // Get the current user from the session
-    final user = supabase.auth.currentUser;
+  _ProfilePageState createState() => _ProfilePageState();
+}
 
+class _ProfilePageState extends State<ProfilePage> {
+  
+  @override
+  void initState() {
+    super.initState();
+    _setupPushNotifications();
+  }
+
+  // TODO: Move setupPushNotifcaitons to supplement details screen or reminder_setter in order to have it in a location that makes more design sense
+  Future<void> _setupPushNotifications() async {
+    final messaging = FirebaseMessaging.instance;
+    await messaging.requestPermission();
+    final fcmToken = await messaging.getToken();
+
+    if (fcmToken != null) {
+      // Save the FCM token to a 'profiles' table in your database
+      // You will need to create this table.
+      await supabase.from('profiles').upsert({
+        'id': supabase.auth.currentUser!.id,
+        'fcm_token': fcmToken,
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Display the user's email if available
-            if (user != null) ...[
-              Center(child: Text('Signed in as:', style: Theme.of(context).textTheme.titleMedium)),
-              const SizedBox(height: 8),
-              Center(child: Text(user.email ?? 'No email found', style: Theme.of(context).textTheme.titleLarge)),
-              const SizedBox(height: 40),
-            ],
-            
-            // The Sign Out button
-            ElevatedButton(
-              onPressed: () async {
-                // This will sign the user out and the onAuthStateChange listener
-                // in main.dart will automatically navigate to the LoginPage.
-                await supabase.auth.signOut();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red, // A distinct color for a destructive action
-              ),
-              child: const Text('Sign Out'),
-            ),
-          ],
+      appBar: AppBar(title: const Text('Profile')),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () => supabase.auth.signOut(),
+          child: const Text('Sign Out'),
         ),
       ),
     );
