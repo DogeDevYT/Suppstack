@@ -14,16 +14,12 @@ class ReminderSetter extends StatefulWidget {
 }
 
 class _ReminderSetterState extends State<ReminderSetter> {
+  // --- KEY CHANGE: State now handles a date range ---
   DateTime _focusedDay = DateTime.now();
-  DateTime? _selectedDay;
+  DateTime? _rangeStart;
+  DateTime? _rangeEnd;
   TimeOfDay _selectedTime = const TimeOfDay(hour: 9, minute: 0);
   bool _isLoading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedDay = _focusedDay;
-  }
 
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
@@ -37,9 +33,10 @@ class _ReminderSetterState extends State<ReminderSetter> {
     }
   }
 
-  Future<void> _saveReminder() async {
-    if (_selectedDay == null) {
-      _showSnackBar('Please select a day for the reminder.', isError: true);
+  // --- KEY CHANGE: Logic to save multiple reminders ---
+  Future<void> _saveRemindersForRange() async {
+    if (_rangeStart == null || _rangeEnd == null) {
+      _showSnackBar('Please select a start and end day for the reminder range.', isError: true);
       return;
     }
     setState(() => _isLoading = true);
@@ -48,16 +45,6 @@ class _ReminderSetterState extends State<ReminderSetter> {
       final userId = supabase.auth.currentUser?.id;
       if (userId == null) throw 'User not logged in.';
 
-      // Combine the selected date and time
-      final remindAt = DateTime(
-        _selectedDay!.year,
-        _selectedDay!.month,
-        _selectedDay!.day,
-        _selectedTime.hour,
-        _selectedTime.minute,
-      );
-
-      // Fetch the user's FCM token from their profile
       final profileResponse = await supabase
           .from('profiles')
           .select('fcm_token')
@@ -69,17 +56,33 @@ class _ReminderSetterState extends State<ReminderSetter> {
         throw 'FCM token not found. Please visit the profile page to enable notifications.';
       }
 
-      // Insert the new reminder into the database
-      await supabase.from('reminders').insert({
-        'user_id': userId,
-        'supplement_name': widget.supplementName,
-        'remind_at': remindAt.toIso8601String(),
-        'fcm_token': fcmToken,
-      });
+      // Create a list to hold all the new reminder objects
+      final List<Map<String, dynamic>> remindersToInsert = [];
+      
+      // Loop from the start date to the end date
+      for (var day = _rangeStart!; day.isBefore(_rangeEnd!.add(const Duration(days: 1))); day = day.add(const Duration(days: 1))) {
+        final remindAt = DateTime(
+          day.year,
+          day.month,
+          day.day,
+          _selectedTime.hour,
+          _selectedTime.minute,
+        );
 
-      _showSnackBar('Reminder saved successfully!', isError: false);
+        remindersToInsert.add({
+          'user_id': userId,
+          'supplement_name': widget.supplementName,
+          'remind_at': remindAt.toIso8601String(),
+          'fcm_token': fcmToken,
+        });
+      }
+      
+      // Perform a single bulk insert with all the reminders
+      await supabase.from('reminders').insert(remindersToInsert);
+
+      _showSnackBar('Reminders saved successfully for the selected range!', isError: false);
     } catch (error) {
-      _showSnackBar('Error saving reminder: ${error.toString()}', isError: true);
+      _showSnackBar('Error saving reminders: ${error.toString()}', isError: true);
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -96,7 +99,6 @@ class _ReminderSetterState extends State<ReminderSetter> {
     );
   }
 
-  //TODO: Add Feature to schedule multiple reminders on multiple days, not just on one day at a specific time
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -106,16 +108,20 @@ class _ReminderSetterState extends State<ReminderSetter> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Text('Set a Reminder', style: Theme.of(context).textTheme.titleLarge),
+            Text('Set Reminders', style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 16),
             TableCalendar(
               firstDay: DateTime.now(),
               lastDay: DateTime.now().add(const Duration(days: 365)),
               focusedDay: _focusedDay,
-              selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-              onDaySelected: (selectedDay, focusedDay) {
+              // --- KEY CHANGE: Configure for range selection ---
+              rangeStartDay: _rangeStart,
+              rangeEndDay: _rangeEnd,
+              rangeSelectionMode: RangeSelectionMode.toggledOn,
+              onRangeSelected: (start, end, focusedDay) {
                 setState(() {
-                  _selectedDay = selectedDay;
+                  _rangeStart = start;
+                  _rangeEnd = end;
                   _focusedDay = focusedDay;
                 });
               },
@@ -131,8 +137,8 @@ class _ReminderSetterState extends State<ReminderSetter> {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: _isLoading ? null : _saveReminder,
-              child: Text(_isLoading ? 'Saving...' : 'Save Reminder'),
+              onPressed: _isLoading ? null : _saveRemindersForRange,
+              child: Text(_isLoading ? 'Saving...' : 'Save Reminders for Range'),
             ),
           ],
         ),

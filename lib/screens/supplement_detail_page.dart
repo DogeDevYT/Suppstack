@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:suppstack/components/reminder_setter.dart';
-// You will need to create these components
-// import '../components/dosage_editor.dart';
-// import '../components/image_uploader.dart';
-// import '../components/reminder_setter.dart';
+import '../components/reminder_setter.dart';
+import '../components/update_dosage_component.dart';
+import '../components/image_uploader.dart';
 
 final supabase = Supabase.instance.client;
 
@@ -23,7 +21,7 @@ class SupplementDetailPage extends StatefulWidget {
 }
 
 class _SupplementDetailPageState extends State<SupplementDetailPage> {
-  late final Future<Map<String, dynamic>> _supplementFuture;
+  late Future<Map<String, dynamic>> _supplementFuture;
 
   @override
   void initState() {
@@ -32,7 +30,6 @@ class _SupplementDetailPageState extends State<SupplementDetailPage> {
   }
 
   Future<Map<String, dynamic>> _fetchData() async {
-    // Fetch both the general supplement info and the user's specific stack info
     final supplementRes = await supabase
         .from('supplements')
         .select()
@@ -51,6 +48,39 @@ class _SupplementDetailPageState extends State<SupplementDetailPage> {
     };
   }
 
+  Future<void> _removeSupplement(String supplementName) async {
+    final userId = supabase.auth.currentUser?.id;
+    if (userId == null) return;
+
+    try {
+      await supabase
+          .from('reminders')
+          .delete()
+          .match({'user_id': userId, 'supplement_name': supplementName});
+
+      await supabase.from('user_stacks').delete().eq('id', widget.stackItemId);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Supplement and its reminders have been removed.'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.of(context).pop();
+      }
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error removing supplement: ${error.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,6 +96,8 @@ class _SupplementDetailPageState extends State<SupplementDetailPage> {
           }
           final supplement = snapshot.data!['supplement'];
           final stackItem = snapshot.data!['stackItem'];
+          final supplementName = supplement['product_name'] ?? 'this supplement';
+          final session = supabase.auth.currentSession;
 
           return ListView(
             padding: const EdgeInsets.all(16.0),
@@ -82,14 +114,32 @@ class _SupplementDetailPageState extends State<SupplementDetailPage> {
               Text(supplement['description'] ?? 'No description available.'),
               const Divider(height: 40),
 
-              // Add new Reminder Component
-              ReminderSetter(supplementName: supplement['product_name'] ?? 'this supplement'),
-              
-              // Here you would add your custom components
-              // DosageEditor(stackItem: stackItem),
-              // ImageUploader(stackItem: stackItem),
-              
-              const Text('Dosage and Image components will go here.'),
+              ImageUploader(
+                stackItem: stackItem,
+                session: session, // Add the session object
+                onUpdate: () {    // Correct the parameter name to onUpdate
+                  setState(() {
+                    _supplementFuture = _fetchData();
+                  });
+                },
+              ),
+              UpdateDosageComponent(
+                stackItemId: widget.stackItemId,
+                currentDosage: stackItem['dosage'],
+                navigation: Navigator.of(context),
+              ),
+              ReminderSetter(supplementName: supplementName),
+
+              const SizedBox(height: 24),
+              ElevatedButton.icon(
+                onPressed: () => _removeSupplement(supplementName),
+                icon: const Icon(Icons.delete_outline),
+                label: const Text('Remove from Stack'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red.shade700,
+                  foregroundColor: Colors.white,
+                ),
+              ),
             ],
           );
         },

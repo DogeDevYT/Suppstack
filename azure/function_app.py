@@ -18,8 +18,11 @@ def InvokeSupabase(myTimer: func.TimerRequest) -> None:
     supabase_url = os.environ.get('SUPABASE_FUNCTION_URL')
     supabase_key = os.environ.get('SUPABASE_SERVICE_KEY')
 
-    if not supabase_url or not supabase_key:
-        logging.error("Supabase URL or Service Key is not configured in Application Settings.")
+    #get secondary reminder cleanup function url to clean up reminders table
+    supabase_reminders_cleanup_url = os.environ.get("SUPABASE_CLEANUP_URL")
+
+    if not (supabase_url and supabase_key and supabase_reminders_cleanup_url):
+        logging.error("Supabase URL, Service Key, or cleanup reminders URL is not configured in Application Settings.")
         return
 
     # Set up the headers for the request to Supabase
@@ -28,6 +31,7 @@ def InvokeSupabase(myTimer: func.TimerRequest) -> None:
         'Content-Type': 'application/json'
     }
 
+    #check_reminders
     try:
         # Invoke the Supabase Edge Function by sending a POST request
         response = requests.post(url=supabase_url, headers=headers, json={})
@@ -35,7 +39,20 @@ def InvokeSupabase(myTimer: func.TimerRequest) -> None:
         # Raise an exception for bad status codes (4xx or 5xx)
         response.raise_for_status()
 
-        logging.info(f"Successfully invoked Supabase function. Status: {response.status_code}")
+        logging.info(f"Successfully invoked Supabase check-reminders function. Status: {response.status_code}")
 
     except requests.exceptions.RequestException as e:
-        logging.error(f"Failed to invoke Supabase function. Error: {e}")
+        logging.error(f"Failed to invoke Supabase check-reminders function. Error: {e}")
+    
+    #cleanup reminders
+    try:
+        # Invoke the Supabase Edge Function by sending a POST request
+        response = requests.post(url=supabase_url, headers=headers, json={})
+
+        # Raise an exception for bad status codes (4xx or 5xx)
+        response.raise_for_status()
+
+        logging.info(f"Successfully invoked Supabase cleanup-sent-reminders function. Status: {response.status_code}")
+
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Failed to invoke Supabase cleanup-sent-reminders function. Error: {e}")
