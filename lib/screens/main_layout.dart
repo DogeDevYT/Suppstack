@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'home_page.dart';
 import 'news_feed_page.dart';
 import 'profile_page.dart';
+import 'package:flutter/cupertino.dart';
 
 class MainLayout extends StatefulWidget {
   const MainLayout({Key? key}) : super(key: key);
@@ -32,18 +33,18 @@ class _MainLayoutState extends State<MainLayout> {
         onTap: (index) => setState(() => _currentIndex = index),
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
+            icon: Icon(CupertinoIcons.house),
+            activeIcon: Icon(CupertinoIcons.house_fill),
             label: 'Stack',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.article_outlined),
-            activeIcon: Icon(Icons.article),
+            icon: Icon(CupertinoIcons.news),
+            activeIcon: Icon(CupertinoIcons.news_solid),
             label: 'Discover',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
+            icon: Icon(CupertinoIcons.person_crop_circle),
+            activeIcon: Icon(CupertinoIcons.person_crop_circle_fill),
             label: 'Profile',
           ),
         ],

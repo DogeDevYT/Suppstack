@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../components/reminder_setter.dart';
 import '../components/update_dosage_component.dart';
 import '../components/image_uploader.dart';
+import 'package:flutter/cupertino.dart';
 
 final supabase = Supabase.instance.client;
 
@@ -133,7 +134,7 @@ class _SupplementDetailPageState extends State<SupplementDetailPage> {
               const SizedBox(height: 24),
               ElevatedButton.icon(
                 onPressed: () => _removeSupplement(supplementName),
-                icon: const Icon(Icons.delete_outline),
+                icon: const Icon(CupertinoIcons.delete),
                 label: const Text('Remove from Stack'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red.shade700,

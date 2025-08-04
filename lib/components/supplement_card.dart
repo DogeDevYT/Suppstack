@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 class SupplementCard extends StatelessWidget {
   final String brandName;
@@ -79,7 +80,7 @@ class SupplementCard extends StatelessWidget {
                 ),
               ),
               // Arrow icon on the right
-              const Icon(Icons.chevron_right, color: Colors.grey),
+              const Icon(CupertinoIcons.chevron_right, color: Colors.grey),
             ],
           ),
         ),

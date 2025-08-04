@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 
 final supabase = Supabase.instance.client;
 
@@ -81,7 +82,7 @@ class _ProfilePageState extends State<ProfilePage> {
             // --- New Button to Setup Notifications ---
             ElevatedButton.icon(
               onPressed: _isLoading ? null : _setupPushNotifications,
-              icon: const Icon(Icons.notifications_active_outlined),
+              icon: const Icon(CupertinoIcons.bell),
               label: Text(_isLoading ? 'Setting Up...' : 'Enable Supplement Reminders'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue.shade700,
@@ -91,13 +92,14 @@ class _ProfilePageState extends State<ProfilePage> {
 
             const SizedBox(height: 24),
 
-            ElevatedButton(
+            ElevatedButton.icon(
               onPressed: () => supabase.auth.signOut(),
+              icon: const Icon(CupertinoIcons.arrow_right_to_line),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red.shade700,
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Sign Out'),
+              label: const Text('Sign Out'),
             ),
           ],
         ),

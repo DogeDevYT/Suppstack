@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'add_supplement_page.dart';
 import 'supplement_detail_page.dart';
 import '../components/supplement_card.dart';
+import 'package:flutter/cupertino.dart';
 
 final supabase = Supabase.instance.client;
 
@@ -133,7 +134,7 @@ class _HomePageState extends State<HomePage> {
             MaterialPageRoute(builder: (context) => const AddSupplementPage()),
           ).then((_) => _fetchStack());
         },
-        child: const Icon(Icons.add),
+        child: const Icon(CupertinoIcons.add),
       ),
     );
   }

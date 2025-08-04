@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:async'; // For debounce timer
+import 'package:flutter/cupertino.dart';
 
 final supabase = Supabase.instance.client;
 
@@ -99,7 +100,7 @@ class _AddSupplementPageState extends State<AddSupplementPage> {
               decoration: const InputDecoration(
                 labelText: 'Search the supplement database...',
                 border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: Icon(CupertinoIcons.search),
               ),
             ),
           ),
