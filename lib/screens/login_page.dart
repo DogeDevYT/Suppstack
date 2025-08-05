@@ -204,7 +204,7 @@ class _LoginPageState extends State<LoginPage> {
               onPressed: _isLoading ? null : _googleSignIn,
               icon: const Icon(Icons.login), // Replace with a Google icon later
               label: const Text('Sign In with Google'),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
           )
         ],
       ),
