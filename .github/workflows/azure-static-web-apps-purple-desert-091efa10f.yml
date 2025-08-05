@@ -14,8 +14,6 @@ jobs:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
-    # --- KEY CHANGE: Add a timeout ---
-    # This will automatically fail the job if it runs for more than 15 minutes.
     timeout-minutes: 15
     steps:
       - name: Checkout Repo
@@ -26,7 +24,9 @@ jobs:
         with:
           channel: 'stable'
 
-      # --- KEY CHANGE: Make Firebase configuration non-interactive ---
+      # --- KEY CHANGE: Updated flutterfire configure command ---
+      # This version removes the deprecated '--web-api-key' and uses the
+      # modern, explicit flags for each platform's App ID.
       - name: Configure Firebase
         run: |
           dart pub global activate flutterfire_cli
@@ -36,7 +36,6 @@ jobs:
             --platforms=android,ios,web \
             --ios-bundle-id=com.example.suppstack \
             --android-package-name=com.example.suppstack \
-            --web-api-key=${{ secrets.FIREBASE_API_KEY }} \
             --web-app-id=${{ secrets.FIREBASE_WEB_APP_ID }} \
             --android-app-id=${{ secrets.FIREBASE_ANDROID_APP_ID }} \
             --ios-app-id=${{ secrets.FIREBASE_IOS_APP_ID }}
@@ -54,7 +53,7 @@ jobs:
           app_location: "/build/web"
           api_location: ""
           output_location: ""
-          
+
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
@@ -66,4 +65,3 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_PURPLE_DESERT_091EFA10F }}
           action: "close"
-
