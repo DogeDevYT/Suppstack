@@ -1,13 +1,13 @@
-name: Azure Static Web Apps CI/CD
+name: Deploy Flutter Web App to Azure
 
 on:
   push:
     branches:
-      - master
+      - master # Or 'main' if that is your primary branch
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
-      - master
+      - master # Or 'main'
 
 jobs:
   build_and_deploy_job:
@@ -15,23 +15,35 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      # --- KEY CHANGE 1: Setup Flutter Environment ---
+      # This step installs the Flutter SDK on the build server.
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
         with:
-          submodules: true
-          lfs: false
-      - name: Build And Deploy
+          channel: 'stable' # Use the stable channel of Flutter
+
+      # --- KEY CHANGE 2: Build the Flutter Web App ---
+      # This step runs the build command and creates the /build/web directory.
+      - name: Build Flutter Web
+        run: flutter build web --release
+
+      # --- KEY CHANGE 3: Deploy to Azure ---
+      # This step now correctly points to the output of your build command.
+      - name: Deploy to Azure Static Web Apps
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_PURPLE_DESERT_091EFA10F }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "/" # App source code path
-          api_location: "/azure" # Api source code path - optional
-          output_location: "/build/web" # Built app content directory - optional
-          ###### End of Repository/Build Configurations ######
+          # This now points directly to the folder containing the final website files.
+          app_location: "/build/web" 
+          # These are not needed for a Flutter web app
+          api_location: "" 
+          output_location: ""
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
