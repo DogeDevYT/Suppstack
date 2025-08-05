@@ -14,6 +14,9 @@ jobs:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
+    # --- KEY CHANGE: Add a timeout ---
+    # This will automatically fail the job if it runs for more than 15 minutes.
+    timeout-minutes: 15
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
@@ -23,15 +26,20 @@ jobs:
         with:
           channel: 'stable'
 
-      # --- KEY CHANGE: Generate firebase_options.dart ---
-      # This step uses the secrets you added to securely configure the project.
+      # --- KEY CHANGE: Make Firebase configuration non-interactive ---
       - name: Configure Firebase
         run: |
           dart pub global activate flutterfire_cli
-          flutterfire configure --project=${{ secrets.FIREBASE_PROJECT_ID }} --out=lib/firebase_options.dart --yes \
-          --android-app-id=${{ secrets.FIREBASE_ANDROID_APP_ID }} \
-          --ios-bundle-id=com.example.suppstack \
-          --web-api-key=${{ secrets.FIREBASE_API_KEY }}
+          flutterfire configure --project=${{ secrets.FIREBASE_PROJECT_ID }} \
+            --out=lib/firebase_options.dart \
+            --yes \
+            --platforms=android,ios,web \
+            --ios-bundle-id=com.example.suppstack \
+            --android-package-name=com.example.suppstack \
+            --web-api-key=${{ secrets.FIREBASE_API_KEY }} \
+            --web-app-id=${{ secrets.FIREBASE_WEB_APP_ID }} \
+            --android-app-id=${{ secrets.FIREBASE_ANDROID_APP_ID }} \
+            --ios-app-id=${{ secrets.FIREBASE_IOS_APP_ID }}
 
       - name: Build Flutter Web
         run: flutter build web --release
@@ -46,7 +54,7 @@ jobs:
           app_location: "/build/web"
           api_location: ""
           output_location: ""
-
+          
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
@@ -58,3 +66,4 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_PURPLE_DESERT_091EFA10F }}
           action: "close"
+
