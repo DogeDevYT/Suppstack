@@ -3,11 +3,11 @@ name: Deploy Flutter Web App to Azure
 on:
   push:
     branches:
-      - master # Or 'main' if that is your primary branch
+      - master
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
-      - master # Or 'main'
+      - master
 
 jobs:
   build_and_deploy_job:
@@ -18,20 +18,24 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v3
 
-      # --- KEY CHANGE 1: Setup Flutter Environment ---
-      # This step installs the Flutter SDK on the build server.
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable' # Use the stable channel of Flutter
+          channel: 'stable'
 
-      # --- KEY CHANGE 2: Build the Flutter Web App ---
-      # This step runs the build command and creates the /build/web directory.
+      # --- KEY CHANGE: Generate firebase_options.dart ---
+      # This step uses the secrets you added to securely configure the project.
+      - name: Configure Firebase
+        run: |
+          dart pub global activate flutterfire_cli
+          flutterfire configure --project=${{ secrets.FIREBASE_PROJECT_ID }} --out=lib/firebase_options.dart --yes \
+          --android-app-id=${{ secrets.FIREBASE_ANDROID_APP_ID }} \
+          --ios-bundle-id=com.example.suppstack \
+          --web-api-key=${{ secrets.FIREBASE_API_KEY }}
+
       - name: Build Flutter Web
         run: flutter build web --release
 
-      # --- KEY CHANGE 3: Deploy to Azure ---
-      # This step now correctly points to the output of your build command.
       - name: Deploy to Azure Static Web Apps
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
@@ -39,10 +43,8 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_PURPLE_DESERT_091EFA10F }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          # This now points directly to the folder containing the final website files.
-          app_location: "/build/web" 
-          # These are not needed for a Flutter web app
-          api_location: "" 
+          app_location: "/build/web"
+          api_location: ""
           output_location: ""
 
   close_pull_request_job:
