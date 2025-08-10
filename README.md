@@ -154,5 +154,4 @@ This project is licensed under the **MIT License**.
 ---
 
 ### 📌 Notes
-- Replace `docs/banner.png` with your own banner image for a polished look.
-- Consider adding screenshots of the app in action for better visual appeal.
+- This app is mainly a side project for me.
