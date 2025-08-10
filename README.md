@@ -1,98 +1,158 @@
-Suppstack
-Stop Guessing. Start Knowing.
+# 📱 Suppstack
+> **Stop Guessing. Start Knowing.**  
 
-Supplement Advisor is a mobile application designed to help users make informed, science-backed decisions about their supplement stack. It cuts through the marketing fluff and social media hype to provide clear, personalized, and unbiased information.
+![Suppstack Banner](docs/banner.png)
 
-Core Features
-Full User Authentication: Secure sign-up, sign-in, and password reset functionality powered by Supabase Auth, including Google OAuth.
+**Supplement Advisor** is a mobile application that helps users make informed, **science-backed** decisions about their supplement stack.  
+It cuts through marketing fluff and social media hype to deliver **clear, personalized, and unbiased** information.
 
-Personal Supplement Stack: Users can build and manage their personal list of supplements.
+---
 
-Comprehensive Database Search: Search a massive, real-world database of supplements (powered by the NIH DSLD) to find and add new products to your stack.
+## ✨ Core Features
 
-Daily Tracking: A "to-do list" style interface on the home page allows users to check off the supplements they've taken each day.
+<details>
+<summary>🔐 Full User Authentication</summary>
 
-Personalized Details: For each supplement in their stack, users can:
+- Secure sign-up, sign-in, and password reset functionality powered by **Supabase Auth**.
+- Includes **Google OAuth** login support.
 
-Upload a custom photo of their supplement bottle.
+</details>
 
-Set and update their personal dosage.
+<details>
+<summary>💊 Personal Supplement Stack</summary>
 
-Remove the supplement and its associated reminders.
+- Build and manage your personalized list of supplements.
 
-Push Notification Reminders: A robust, server-side push notification system (using Supabase Edge Functions and Firebase Cloud Messaging) reminds users to take their supplements, even when the app is closed.
+</details>
 
-Discover News: A dedicated news feed that pulls the latest health and pharmacology headlines from NewsAPI.org.
+<details>
+<summary>🔍 Comprehensive Database Search</summary>
 
-User Profile: A profile page where users can manage their notification settings and sign out.
+- Search a massive, real-world database of supplements powered by the **NIH DSLD**.
+- Easily add new products to your stack.
 
-Tech Stack
-Frontend: Flutter (Dart)
+</details>
 
-Backend: Supabase (PostgreSQL, Authentication, Storage, Edge Functions)
+<details>
+<summary>✅ Daily Tracking</summary>
 
-Push Notifications: Firebase Cloud Messaging (FCM)
+- A “to-do list” style home page to check off supplements taken each day.
 
-News Source: NewsAPI.org
+</details>
 
-Setup and Installation
-To get this project running locally, please follow these steps.
+<details>
+<summary>📄 Personalized Details</summary>
 
-1. Prerequisites
-Flutter SDK installed.
+For each supplement, users can:
+- Upload a **custom photo** of their supplement bottle.
+- Set and update **personal dosage**.
+- Remove supplements and their reminders.
 
-An editor like VS Code or Android Studio with the Flutter plugin.
+</details>
 
-A Supabase project created and ready.
+<details>
+<summary>🔔 Push Notification Reminders</summary>
 
-A Firebase project created for push notifications.
+- Server-side push notifications using **Supabase Edge Functions** and **Firebase Cloud Messaging**.
+- Works even when the app is closed.
 
-An API key from NewsAPI.org.
+</details>
 
-2. Clone the Repository
+<details>
+<summary>📰 Discover News</summary>
+
+- Dedicated news feed pulling the latest health & pharmacology headlines from **NewsAPI.org**.
+
+</details>
+
+<details>
+<summary>👤 User Profile</summary>
+
+- Manage notification settings and sign out from a central profile page.
+
+</details>
+
+---
+
+## 🛠 Tech Stack
+
+| Area              | Technology |
+|-------------------|------------|
+| **Frontend**      | Flutter (Dart) |
+| **Backend**       | Supabase (PostgreSQL, Auth, Storage, Edge Functions) |
+| **Push Notifications** | Firebase Cloud Messaging (FCM) |
+| **News Source**   | NewsAPI.org |
+
+---
+
+## 🚀 Setup & Installation
+
+### 1️⃣ Prerequisites
+- Flutter SDK installed  
+- VS Code / Android Studio with Flutter plugin  
+- A **Supabase** project ready  
+- A **Firebase** project for push notifications  
+- An **API key** from [NewsAPI.org](https://newsapi.org/)  
+
+### 2️⃣ Clone the Repository
+```bash
 git clone <your-repository-url>
 cd supplement-advisor
+```
 
-3. Configure Environment Variables
-In the root directory of the project, create a file named .env.
-
-Add your secret keys to this file. It should look like this:
-
+### 3️⃣ Configure Environment Variables
+Create a `.env` file in the project root:
+```env
 SUPABASE_URL=YOUR_SUPABASE_URL
 SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
 NEWS_API_KEY=YOUR_NEWS_API_KEY
 GOOGLE_SERVER_CLIENT_ID=YOUR_GOOGLE_WEB_CLIENT_ID
 GOOGLE_IOS_CLIENT_ID=YOUR_GOOGLE_IOS_CLIENT_ID
+```
 
-Add the .env file to your pubspec.yaml assets so Flutter can access it:
-
+Add `.env` to your `pubspec.yaml` so Flutter can access it:
+```yaml
 flutter:
   assets:
     - .env
+```
 
-Make sure your .gitignore file contains a line for .env to keep your keys secure.
+Make sure `.gitignore` contains:
+```
+.env
+```
 
-4. Install Dependencies
-Run the following command in your terminal from the project's root directory:
-
+### 4️⃣ Install Dependencies
+```bash
 flutter pub get
+```
 
-5. Run the App
-Make sure you have an emulator running or a physical device connected, then run:
-
+### 5️⃣ Run the App
+Make sure you have an emulator or connected device, then:
+```bash
 flutter run
+```
 
-Backend Setup
-This project relies on a properly configured Supabase backend. This includes:
+---
 
-Specific database tables (supplements, user_stacks, profiles, reminders, dsld_supplements).
+## 🗄 Backend Setup
 
-Row Level Security (RLS) policies on all tables.
+The app relies on a **properly configured Supabase backend**:
+- **Database Tables:** `supplements`, `user_stacks`, `profiles`, `reminders`, `dsld_supplements`
+- **RLS Policies:** Enabled on all tables
+- **Database Functions:** `add_dsld_supplement_to_stack`
+- **Edge Functions:** `send-reminder`, `check-reminders`, `cleanup-sent-reminders`
+- **Storage:** A bucket named `supplement-images`
 
-Database functions (add_dsld_supplement_to_stack).
+Refer to the included **SQL** and **TypeScript** setup files for exact configuration details.
 
-Edge Functions (send-reminder, check-reminders, cleanup-sent-reminders).
+---
 
-A Storage bucket named supplement-images.
+## 📜 License
+This project is licensed under the **MIT License**.
 
-Please refer to the SQL and TypeScript files in the project for the exact setup instructions.
+---
+
+### 📌 Notes
+- Replace `docs/banner.png` with your own banner image for a polished look.
+- Consider adding screenshots of the app in action for better visual appeal.
