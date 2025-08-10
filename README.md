@@ -1,7 +1,7 @@
 # 📱 Suppstack
 > **Stop Guessing. Start Knowing.**  
 
-![Suppstack Banner](docs/banner.png)
+![Suppstack Banner](/assets/icon.png)
 
 **Supplement Advisor** is a mobile application that helps users make informed, **science-backed** decisions about their supplement stack.  
 It cuts through marketing fluff and social media hype to deliver **clear, personalized, and unbiased** information.
